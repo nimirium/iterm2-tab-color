@@ -1,39 +1,27 @@
 # zsh plugin for setting iTerm2 tab colors and title overrides
 #
-# Andy Gimblett, 2017-2020
+# Originally by Andy Gimblett, 2017-2020 (https://github.com/gimbo/iterm2-tabs.zsh)
+# Customized: single `iterm2-tab` entry point instead of five separate aliases.
 #
-# This provides the following five functions (and their aliases):
+# Usage:
 #
-# iterm2_tab_color              (tc)
-# iterm2_tab_color_named        (tcn)
-# iterm2_tab_color_random       (tcr)
-# iterm2_tab_color_random_named (tcnr)
-#
-# # iterm2_tab_title              (tt)
-#
+#   iterm2-tab color rgb <r> <g> <b>
+#   iterm2-tab color <name>
+#   iterm2-tab color random-rgb
+#   iterm2-tab color random
+#   iterm2-tab text <text>
 #
 # All the colour-related commands are handled by a python script (in the same
 # directory).
 #
 # The colors are taken from
-# https://github.com/jacaetevha/finna-be-octo-hipster; I didn't use
-# that directly because I didn't like having one function per color.
+# https://github.com/jacaetevha/finna-be-octo-hipster.
 #
 #
-# Note that `iterm2_tab_title` simply sets a "tab title override" env var, and
-# on its own won't actually affect the tab title.  Previous versions of this
-# plugin used iterm2 proprietary escape codes to set the tab title, but I now
-# use a more complex (and more powerful) approach to set my tab titles, which
-# involves two further steps (not included in this plugin and left as an
-# exercise for the reader):
-#
-# 1. An `iterm2_print_user_vars()` checks if the tab title override env var is
-#    set, and if so, copies its value to an iterm2 user variable.
-# 2. An AutoLaunch script computes the tab title: if the override is set, it
-#    uses that, otherwise it uses some internal logic to automatically choose a
-#    title to my preference. (This script is the reason for the change in
-#    approach, basically.)  My iterm2 profile is then configured to set the tab
-#    title via this scrpt.
+# Note that `iterm2_tab_title` (used by `iterm2-tab text`) simply sets a "tab
+# title override" env var, and on its own won't actually affect the tab
+# title. Making it change the visible tab title requires extra setup (an
+# `iterm2_print_user_vars()` hook + an AutoLaunch script) not included here.
 
 
 # We expect the python script to be in the same folder as the script
@@ -49,36 +37,23 @@ _iterm2_tabs_py=${0:a:h}/iterm2_tabs.py
 iterm2_tab_color() {
     uv run $_iterm2_tabs_py --rgb $1 $2 $3
 }
-alias tc=iterm2_tab_color
 
 
 # Set tab color by name, e.g.
 #
 # $ iterm2_tab_color_named maroon
 #
-# Supports tab completion on the known names (which are defined in the
-# python script).
-#
 iterm2_tab_color_named() {
     uv run $_iterm2_tabs_py --color $1
 }
-alias tcn=iterm2_tab_color_named
 
 
-# Set tab color to some random RBG value, and echo it, e.g.
+# Set tab color to some random RGB value, and echo it, e.g.
 #
 # $ iterm2_tab_color_random
 #
 iterm2_tab_color_random() {
     uv run $_iterm2_tabs_py --random-color
-}
-alias tcr=iterm2_tab_color_random
-# Dark and light variants
-tcrd() {
-    tc "$((( RANDOM % 128 )))" "$((( RANDOM % 128 )))" "$((( RANDOM % 128 )))"
-}
-tcrl() {
-    tc "$((( RANDOM % 128 ) + 128 ))" "$((( RANDOM % 128 ) + 128 ))" "$((( RANDOM % 128 ) + 128 ))"
 }
 
 
@@ -90,15 +65,6 @@ tcrl() {
 iterm2_tab_color_random_named() {
     uv run $_iterm2_tabs_py --random-named-color
 }
-alias tcnr=iterm2_tab_color_random_named
-
-
-# Set up tab completion for iterm2_tab_color_named
-
-_tab_color_completion() {
-    _values $(uv run $_iterm2_tabs_py --list-colors)
-}
-compdef _tab_color_completion iterm2_tab_color_named
 
 
 # Set tab title override env var, e.g.
@@ -106,10 +72,58 @@ compdef _tab_color_completion iterm2_tab_color_named
 # $ iterm2_tab_title hello
 # $ iterm2_tab_title Long titles OK
 #
-# See the comment at the top of this file for more info on what's needed to
-# actually make this change the tab title.
-#
 iterm2_tab_title () {
     export TAB_TITLE_OVERRIDE="$*"
 }
-alias tt=iterm2_tab_title
+
+
+# Single entry point dispatching to the functions above.
+#
+iterm2-tab() {
+    case "$1" in
+        color)
+            shift
+            case "$1" in
+                rgb)
+                    shift
+                    iterm2_tab_color "$1" "$2" "$3"
+                    ;;
+                random-rgb)
+                    iterm2_tab_color_random
+                    ;;
+                random)
+                    iterm2_tab_color_random_named
+                    ;;
+                "")
+                    echo "Usage: iterm2-tab color rgb <r> <g> <b> | iterm2-tab color <name> | iterm2-tab color random-rgb | iterm2-tab color random" >&2
+                    return 1
+                    ;;
+                *)
+                    iterm2_tab_color_named "$1"
+                    ;;
+            esac
+            ;;
+        text)
+            shift
+            iterm2_tab_title "$@"
+            ;;
+        *)
+            echo "Usage: iterm2-tab color rgb <r> <g> <b> | iterm2-tab color <name> | iterm2-tab color random-rgb | iterm2-tab color random | iterm2-tab text <text>" >&2
+            return 1
+            ;;
+    esac
+}
+
+
+# Tab completion for `iterm2-tab`
+#
+_iterm2_tab_completion() {
+    local -a subcommands
+    subcommands=('color:set tab color' 'text:set tab title override')
+    if (( CURRENT == 2 )); then
+        _describe 'command' subcommands
+    elif (( CURRENT == 3 )) && [[ ${words[2]} == color ]]; then
+        _values 'option' rgb random-rgb random $(uv run $_iterm2_tabs_py --list-colors)
+    fi
+}
+compdef _iterm2_tab_completion iterm2-tab
