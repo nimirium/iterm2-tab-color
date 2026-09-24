@@ -49,10 +49,10 @@ is hard-coded but accessible via tab completion.
 Most of the color-related work is done by
 [a python script](iterm2_tabs.py).
 
-Note that setting a tab title override via `iterm2-tab text` doesn't by
-itself change the visible tab title — some external iTerm2 machinery is
-needed for that; see comments in [`iterm2-tabs.zsh`](iterm2-tabs.zsh) for
-details.
+`iterm2-tab text` sets the tab title directly via a terminal escape code.
+Shell prompt integrations (e.g. oh-my-zsh themes, powerlevel10k) may
+overwrite it on the next prompt draw, since they often set the title
+themselves too.
 
 ## Credits
 

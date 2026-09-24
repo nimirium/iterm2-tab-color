@@ -18,10 +18,10 @@
 # https://github.com/jacaetevha/finna-be-octo-hipster.
 #
 #
-# Note that `iterm2_tab_title` (used by `iterm2-tab text`) simply sets a "tab
-# title override" env var, and on its own won't actually affect the tab
-# title. Making it change the visible tab title requires extra setup (an
-# `iterm2_print_user_vars()` hook + an AutoLaunch script) not included here.
+# `iterm2_tab_title` (used by `iterm2-tab text`) sets the tab title directly
+# via a terminal escape code. Note that shell prompt integrations (e.g.
+# oh-my-zsh themes, powerlevel10k) may overwrite it on the next prompt draw,
+# since they often set the title themselves too.
 
 
 # We expect the python script to be in the same folder as the script
@@ -67,13 +67,13 @@ iterm2_tab_color_random_named() {
 }
 
 
-# Set tab title override env var, e.g.
+# Set tab title directly, e.g.
 #
 # $ iterm2_tab_title hello
 # $ iterm2_tab_title Long titles OK
 #
 iterm2_tab_title () {
-    export TAB_TITLE_OVERRIDE="$*"
+    printf "\033]0;%s\007" "$*"
 }
 
 
