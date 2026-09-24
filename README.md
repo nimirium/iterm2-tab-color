@@ -1,10 +1,10 @@
-# iterm2-tab
+# iterm2-tab-colors
 
 A zsh plugin for setting iTerm2 tab colors, with a single `iterm2-tab-color`
 command instead of a handful of separate aliases.
 
 > Note: repo/plugin dir is still named `iterm2-tab` for now — will be
-> renamed to `iterm2-tab-color` when this becomes a proper public fork.
+> renamed to `iterm2-tab-colors` when this becomes a proper public fork.
 
 ![Four iTerm2 tabs set to blue, green, random (coral), and a custom red RGB](demo.png)
 
