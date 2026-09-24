@@ -1,25 +1,62 @@
-# Andy's zsh plugin for setting iTerm2 tab colors and title overrides
+# iterm2-tab
 
-This plugin provides five functions for setting an iTerm2 tab's color and a title override:
+A zsh plugin for setting iTerm2 tab colors and title overrides, with a single
+`iterm2-tab` command instead of a handful of separate aliases.
 
-* `iterm2_tab_color` with alias `tc`
-* `iterm2_tab_color_named` with alias `tcn`
-* `iterm2_tab_color_random` with alias `tcr`
-* `iterm2_tab_color_random_named` with alias `tcnr`
+Fork of [gimbo/iterm2-tabs.zsh](https://github.com/gimbo/iterm2-tabs.zsh) by
+Andy Gimblett.
 
-and:
+## Installation
 
-* `iterm2_tab_title` with alias `tt`
+Requires [oh-my-zsh](https://ohmyz.sh/) and [uv](https://docs.astral.sh/uv/).
 
-See [`iterm2-tabs.zsh`](iterm2-tabs.zsh) for more details, and examples.
+```zsh
+git clone git@github.com:nimirium/iterm2-tabs.zsh.git "$ZSH_CUSTOM/plugins/iterm2-tab"
+```
 
-Colors may be set either as RGB triples or as named colors, where the list of color names (from [jacaetevha/finna-be-octo-hipster](https://github.com/jacaetevha/finna-be-octo-hipster)) is hard-coded - but accessible via tab completion.
+Then add this line to `~/.zshrc`, after `source $ZSH/oh-my-zsh.sh`:
 
-* `tcn --show-colors` shows the list of available color names, along with a demo of each color;
-* `tcn --list-colors` just shows the names; this is what tab completion triggers.
+```zsh
+source "$ZSH_CUSTOM/plugins/iterm2-tab/iterm2-tabs.zsh"
+```
 
-Most of the color-related work is done by [a python script](iterm2_tabs.py).
+Reload your shell (`source ~/.zshrc`, or open a new tab).
 
-Note that (unlike previous versions of this plugin), some external machinery is needed to actually set tab titles using the function provided here; see comments in the plugin itself for more details.
+## Usage
 
-Andy Gimblett, <andy@barefootcode.com>. 2017-2024
+```zsh
+iterm2-tab color rgb <r> <g> <b>   # set tab color to an RGB triple
+iterm2-tab color <name>            # set tab color by name
+iterm2-tab color random-rgb        # set tab color to a random RGB value
+iterm2-tab color random            # set tab color to a random named color
+iterm2-tab text <text>             # set a tab title override
+```
+
+Tab completion is available: `iterm2-tab <TAB>` lists subcommands, and
+`iterm2-tab color <TAB>` lists `rgb`, `random-rgb`, `random`, plus every
+available color name.
+
+Colors may be set either as RGB triples or as named colors, where the list
+of color names (from
+[jacaetevha/finna-be-octo-hipster](https://github.com/jacaetevha/finna-be-octo-hipster))
+is hard-coded but accessible via tab completion.
+
+* `uv run iterm2_tabs.py --show-colors` shows the list of available color
+  names, along with a demo of each color
+* `uv run iterm2_tabs.py --list-colors` just shows the names; this is what
+  tab completion uses
+
+Most of the color-related work is done by
+[a python script](iterm2_tabs.py).
+
+Note that setting a tab title override via `iterm2-tab text` doesn't by
+itself change the visible tab title — some external iTerm2 machinery is
+needed for that; see comments in [`iterm2-tabs.zsh`](iterm2-tabs.zsh) for
+details.
+
+## Credits
+
+Original plugin (`iterm2_tab_color`, `iterm2_tab_color_named`,
+`iterm2_tab_color_random`, `iterm2_tab_color_random_named`,
+`iterm2_tab_title` and the underlying [python script](iterm2_tabs.py)) by
+Andy Gimblett, <andy@barefootcode.com>, 2017-2024.
