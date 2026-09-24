@@ -3,7 +3,7 @@
 A zsh plugin for setting iTerm2 tab colors, with a single `iterm2-tab-color`
 command instead of a handful of separate aliases.
 
-> Note: repo/plugin dir is still named `iterm2-tab` for now — will be
+> Note: the GitHub repo is still named `iterm2-tabs.zsh` for now — will be
 > renamed to `iterm2-tab-color` when this becomes a proper public fork.
 
 ![Four iTerm2 tabs set to blue, green, random (coral), and a custom red RGB](demo.png)
@@ -16,13 +16,13 @@ Andy Gimblett.
 Requires [oh-my-zsh](https://ohmyz.sh/) and [uv](https://docs.astral.sh/uv/).
 
 ```zsh
-git clone git@github.com:nimirium/iterm2-tabs.zsh.git "$ZSH_CUSTOM/plugins/iterm2-tab"
+git clone git@github.com:nimirium/iterm2-tabs.zsh.git "$ZSH_CUSTOM/plugins/iterm2-tab-color"
 ```
 
 Then add this line to `~/.zshrc`, after `source $ZSH/oh-my-zsh.sh`:
 
 ```zsh
-source "$ZSH_CUSTOM/plugins/iterm2-tab/iterm2-tabs.zsh"
+source "$ZSH_CUSTOM/plugins/iterm2-tab-color/iterm2-tab-color.zsh"
 ```
 
 Reload your shell (`source ~/.zshrc`, or open a new tab).
