@@ -1,14 +1,14 @@
-# zsh plugin for setting iTerm2 tab colors and title overrides
+# zsh plugin for setting iTerm2 tab colors
 #
 # Originally by Andy Gimblett, 2017-2020 (https://github.com/gimbo/iterm2-tabs.zsh)
-# Customized: single `iterm2-tab` entry point instead of five separate aliases.
+# Customized: single `iterm2-tab-color` entry point instead of five separate aliases.
 #
 # Usage:
 #
-#   iterm2-tab color rgb <r> <g> <b>
-#   iterm2-tab color <name>
-#   iterm2-tab color random-rgb
-#   iterm2-tab color random
+#   iterm2-tab-color rgb <r> <g> <b>
+#   iterm2-tab-color <name>
+#   iterm2-tab-color random-rgb
+#   iterm2-tab-color random
 #
 # All the colour-related commands are handled by a python script (in the same
 # directory).
@@ -62,47 +62,34 @@ iterm2_tab_color_random_named() {
 
 # Single entry point dispatching to the functions above.
 #
-iterm2-tab() {
+iterm2-tab-color() {
     case "$1" in
-        color)
+        rgb)
             shift
-            case "$1" in
-                rgb)
-                    shift
-                    iterm2_tab_color "$1" "$2" "$3"
-                    ;;
-                random-rgb)
-                    iterm2_tab_color_random
-                    ;;
-                random)
-                    iterm2_tab_color_random_named
-                    ;;
-                "")
-                    echo "Usage: iterm2-tab color rgb <r> <g> <b> | iterm2-tab color <name> | iterm2-tab color random-rgb | iterm2-tab color random" >&2
-                    return 1
-                    ;;
-                *)
-                    iterm2_tab_color_named "$1"
-                    ;;
-            esac
+            iterm2_tab_color "$1" "$2" "$3"
+            ;;
+        random-rgb)
+            iterm2_tab_color_random
+            ;;
+        random)
+            iterm2_tab_color_random_named
+            ;;
+        "")
+            echo "Usage: iterm2-tab-color rgb <r> <g> <b> | iterm2-tab-color <name> | iterm2-tab-color random-rgb | iterm2-tab-color random" >&2
+            return 1
             ;;
         *)
-            echo "Usage: iterm2-tab color rgb <r> <g> <b> | iterm2-tab color <name> | iterm2-tab color random-rgb | iterm2-tab color random" >&2
-            return 1
+            iterm2_tab_color_named "$1"
             ;;
     esac
 }
 
 
-# Tab completion for `iterm2-tab`
+# Tab completion for `iterm2-tab-color`
 #
-_iterm2_tab_completion() {
-    local -a subcommands
-    subcommands=('color:set tab color')
+_iterm2_tab_color_completion() {
     if (( CURRENT == 2 )); then
-        _describe 'command' subcommands
-    elif (( CURRENT == 3 )) && [[ ${words[2]} == color ]]; then
         _values 'option' rgb random-rgb random $(uv run $_iterm2_tabs_py --list-colors)
     fi
 }
-compdef _iterm2_tab_completion iterm2-tab
+compdef _iterm2_tab_color_completion iterm2-tab-color

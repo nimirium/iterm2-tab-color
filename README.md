@@ -1,7 +1,10 @@
 # iterm2-tab
 
-A zsh plugin for setting iTerm2 tab colors, with a single `iterm2-tab`
+A zsh plugin for setting iTerm2 tab colors, with a single `iterm2-tab-color`
 command instead of a handful of separate aliases.
+
+> Note: repo/plugin dir is still named `iterm2-tab` for now — will be
+> renamed to `iterm2-tab-color` when this becomes a proper public fork.
 
 Fork of [gimbo/iterm2-tabs.zsh](https://github.com/gimbo/iterm2-tabs.zsh) by
 Andy Gimblett.
@@ -25,15 +28,14 @@ Reload your shell (`source ~/.zshrc`, or open a new tab).
 ## Usage
 
 ```zsh
-iterm2-tab color rgb <r> <g> <b>   # set tab color to an RGB triple
-iterm2-tab color <name>            # set tab color by name
-iterm2-tab color random-rgb        # set tab color to a random RGB value
-iterm2-tab color random            # set tab color to a random named color
+iterm2-tab-color rgb <r> <g> <b>   # set tab color to an RGB triple
+iterm2-tab-color <name>            # set tab color by name
+iterm2-tab-color random-rgb        # set tab color to a random RGB value
+iterm2-tab-color random            # set tab color to a random named color
 ```
 
-Tab completion is available: `iterm2-tab <TAB>` lists subcommands, and
-`iterm2-tab color <TAB>` lists `rgb`, `random-rgb`, `random`, plus every
-available color name.
+Tab completion is available: `iterm2-tab-color <TAB>` lists `rgb`,
+`random-rgb`, `random`, plus every available color name.
 
 Colors may be set either as RGB triples or as named colors, where the list
 of color names (from
